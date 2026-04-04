@@ -12,7 +12,27 @@ App runs on port `9090`.
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and fill secrets.
+Copy `.env.example` to `.env.local` and fill secrets:
+
+- `DIRECTUS_URL`
+- `DIRECTUS_STATIC_TOKEN`
+- `DIRECTUS_REVALIDATE_SECRET`
+- `DIRECTUS_TIMEOUT_MS` (optional)
+
+## Routes
+
+- `/`
+- `/about`
+- `/blog`
+- `/blog/[slug]`
+- `/publications`
+- `/conferences`
+- `/contact`
+
+## API routes
+
+- `POST /api/contact`
+- `GET /api/assets/[id]`
 
 ## Quality checks
 
@@ -20,5 +40,5 @@ Copy `.env.example` to `.env.local` and fill secrets.
 yarn lint
 yarn typecheck
 yarn test
+yarn build
 ```
-# Himanshi-baid
