@@ -7,7 +7,7 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 const FALLBACK_BIO = `Emergency Medicine physician with strong academic orientation and over 3 years of post-MD experience in clinical care, teaching, research, and academic administration. Gold Medalist in MD Emergency Medicine (AIIMS Rishikesh) with national and international exposure, including MRCEM (UK) and PDCC in Toxicology.
 
-Actively involved in undergraduate and postgraduate teaching, simulation-based education, quality improvement projects, and high-impact research with 14 indexed publications. Passionate about building structured emergency medicine training programs and mentoring future clinician-researchers.`
+Currently Assistant Professor in Emergency Medicine at Mahatma Gandhi Medical College and Hospital, Jaipur. Actively involved in undergraduate and postgraduate teaching, simulation-based education, quality improvement projects, and high-impact research with 18 listed publications. Passionate about building structured emergency medicine training programs and mentoring future clinician-researchers.`
 
 interface BioSectionProps {
   bioFull: string

@@ -17,6 +17,7 @@ import { PhilosophySection } from '@/components/sections/home/PhilosophySection'
 import { AwardsSection } from '@/components/sections/home/AwardsSection'
 import { LatestPostsSection } from '@/components/sections/home/LatestPostsSection'
 import { ContactCTASection } from '@/components/sections/home/ContactCTASection'
+import { buildPageJsonLd, JsonLd, SEO_ROUTES } from '@/lib/seo'
 
 export default async function Home() {
   const [
@@ -42,33 +43,36 @@ export default async function Home() {
   ])
 
   const stats = [
-    { label: 'Publications', value: pubCount ? String(pubCount) : '10+' },
+    { label: 'Publications', value: pubCount ? String(pubCount) : '18' },
     { label: 'Gold Medals', value: goldCount ? String(goldCount) : '3' },
     { label: 'Conferences', value: confCount ? String(confCount) : '15+' },
-    { label: 'Training', value: 'AIIMS' },
+    { label: 'Current Role', value: 'MGMCH' },
   ]
 
   const cvFileUrl = getAssetUrl(siteConfig.cv_file)
 
   return (
-    <PageWrapper>
-      <main>
-        <HeroSection siteConfig={siteConfig} />
-        <HighlightsSection stats={stats} />
-        <JourneySection education={education} experience={experience} />
-        <PhilosophySection
-          philosophy={siteConfig.philosophy || 'Education must be accessible to all, in the form they understand.'}
-        />
-        <AwardsSection awards={awards} />
-        <LatestPostsSection educationPosts={educationPosts} blogPosts={blogPosts} />
-        <ContactCTASection
-          email={siteConfig.email}
-          cvFileUrl={cvFileUrl}
-          linkedinUrl={siteConfig.linkedin_url}
-          scholarUrl={siteConfig.google_scholar_url}
-          orcidUrl={siteConfig.orcid_url}
-        />
-      </main>
-    </PageWrapper>
+    <>
+      <JsonLd data={buildPageJsonLd(SEO_ROUTES.home)} />
+      <PageWrapper>
+        <main>
+          <HeroSection siteConfig={siteConfig} />
+          <HighlightsSection stats={stats} />
+          <JourneySection education={education} experience={experience} />
+          <PhilosophySection
+            philosophy={siteConfig.philosophy || 'Education must be accessible to all, in the form they understand.'}
+          />
+          <AwardsSection awards={awards} />
+          <LatestPostsSection educationPosts={educationPosts} blogPosts={blogPosts} />
+          <ContactCTASection
+            email={siteConfig.email}
+            cvFileUrl={cvFileUrl}
+            linkedinUrl={siteConfig.linkedin_url}
+            scholarUrl={siteConfig.google_scholar_url}
+            orcidUrl={siteConfig.orcid_url}
+          />
+        </main>
+      </PageWrapper>
+    </>
   )
 }

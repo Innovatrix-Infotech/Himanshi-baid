@@ -5,59 +5,6 @@ import { Container } from '@/components/ui/Container'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import type { HBCertification } from '@/lib/cms/types'
 
-const FALLBACK_CERTIFICATIONS: HBCertification[] = [
-  {
-    id: 'fallback-1',
-    status: 'published',
-    sort: 1,
-    name: 'BLS & ACLS',
-    issuing_body: 'American Heart Association',
-    year: null,
-    credential_id: '',
-    url: '',
-  },
-  {
-    id: 'fallback-2',
-    status: 'published',
-    sort: 2,
-    name: 'ATLS',
-    issuing_body: 'American College of Surgeons',
-    year: null,
-    credential_id: '',
-    url: '',
-  },
-  {
-    id: 'fallback-3',
-    status: 'published',
-    sort: 3,
-    name: 'BCME & CISP',
-    issuing_body: 'National Medical Commission',
-    year: null,
-    credential_id: '',
-    url: '',
-  },
-  {
-    id: 'fallback-4',
-    status: 'published',
-    sort: 4,
-    name: 'Simulation-Based Medical Education',
-    issuing_body: 'Pedistars FDP Level 1',
-    year: null,
-    credential_id: '',
-    url: '',
-  },
-  {
-    id: 'fallback-5',
-    status: 'published',
-    sort: 5,
-    name: 'E-Content Development',
-    issuing_body: 'Certified Programme',
-    year: null,
-    credential_id: '',
-    url: '',
-  },
-]
-
 interface Membership {
   name: string
   abbreviation: string
@@ -65,8 +12,8 @@ interface Membership {
 
 const MEMBERSHIPS: Membership[] = [
   { name: 'Royal College of Emergency Medicine', abbreviation: 'RCEM (UK)' },
+  { name: 'Emergency Medicine Association of India', abbreviation: 'EMAI' },
   { name: 'Academic Emergency Medicine Association', abbreviation: 'AEME' },
-  { name: 'Emergency Medicine Association', abbreviation: 'EMA' },
   { name: 'Pedistars', abbreviation: 'Pedistars' },
 ]
 
@@ -75,8 +22,6 @@ interface CertificationsSectionProps {
 }
 
 export function CertificationsSection({ certifications }: CertificationsSectionProps) {
-  const displayCerts = certifications.length > 0 ? certifications : FALLBACK_CERTIFICATIONS
-
   return (
     <section className="bg-background-alt py-20 md:py-24">
       <Container>
@@ -94,12 +39,19 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
         {/* Certifications — compact rows */}
         <div className="mx-auto max-w-4xl">
           <ScrollReveal>
-            <div className="overflow-hidden rounded-2xl border border-border bg-white">
-              {displayCerts.map((cert, index) => (
+            {certifications.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border bg-white px-6 py-8 text-center">
+                <p className="text-sm font-medium text-navy">
+                  Certifications will appear here once they are published in Directus.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-hidden rounded-2xl border border-border bg-white">
+                {certifications.map((cert, index) => (
                 <div
                   key={cert.id}
                   className={`flex items-center gap-4 px-6 py-4 transition-colors hover:bg-background-alt/50 ${
-                    index < displayCerts.length - 1 ? 'border-b border-border' : ''
+                    index < certifications.length - 1 ? 'border-b border-border' : ''
                   }`}
                 >
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-light">
@@ -115,8 +67,9 @@ export function CertificationsSection({ certifications }: CertificationsSectionP
                     </span>
                   )}
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </ScrollReveal>
         </div>
 

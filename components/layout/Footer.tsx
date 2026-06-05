@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { NAV_LINKS } from './nav-links'
 import { Mail, BookOpen, ExternalLink } from 'lucide-react'
+import type { HBSiteConfig } from '@/lib/cms/types'
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -12,7 +13,21 @@ function LinkedinIcon({ className }: { className?: string }) {
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-export function Footer() {
+interface FooterProps {
+  siteConfig?: HBSiteConfig
+}
+
+export function Footer({ siteConfig }: FooterProps) {
+  const footerLinks = siteConfig?.footer_links.length ? siteConfig.footer_links : NAV_LINKS
+  const siteTitle = siteConfig?.site_title || 'Dr. Himanshi Baid'
+  const tagline = siteConfig?.tagline || 'Emergency Medicine'
+  const bio = siteConfig?.bio_short || siteConfig?.bio || 'Assistant Professor, Emergency Medicine at Mahatma Gandhi Medical College and Hospital, Jaipur.'
+  const email = siteConfig?.email || 'contact@himanshi.dev'
+  const emailHref = `mailto:${email}`
+  const linkedinUrl = siteConfig?.linkedin_url || ''
+  const googleScholarUrl = siteConfig?.google_scholar_url || ''
+  const orcidUrl = siteConfig?.orcid_url || ''
+
   return (
     <footer className='border-t border-border bg-navy-dark'>
       <div className='mx-auto max-w-7xl px-6 py-16 md:px-8'>
@@ -24,47 +39,51 @@ export function Footer() {
                 <span className='font-serif text-sm font-bold text-white'>HB</span>
               </div>
               <div>
-                <p className='text-sm font-bold text-white'>Dr. Himanshi Baid</p>
-                <p className='text-xs text-white/40'>Emergency Medicine</p>
+                <p className='text-sm font-bold text-white'>{siteTitle}</p>
+                <p className='text-xs text-white/40'>{tagline}</p>
               </div>
             </div>
             <p className='mt-4 max-w-xs text-sm leading-relaxed text-white/50'>
-              MBBS, MD Emergency Medicine from AIIMS Rishikesh. Where critical care meets academic rigour.
+              {bio}
             </p>
 
             {/* Social links */}
             <div className='mt-6 flex gap-3'>
               <a
-                href='mailto:contact@himanshi.dev'
+                href={emailHref}
                 className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white'
                 aria-label='Email'
               >
                 <Mail className='h-4 w-4' strokeWidth={1.5} />
               </a>
-              <a
-                href='#'
-                className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white'
-                aria-label='LinkedIn'
-              >
-                <LinkedinIcon className='h-4 w-4' />
-              </a>
-              <a
-                href='#'
-                className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white'
-                aria-label='Google Scholar'
-              >
-                <BookOpen className='h-4 w-4' strokeWidth={1.5} />
-              </a>
+              {linkedinUrl && (
+                <a
+                  href={linkedinUrl}
+                  className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white'
+                  aria-label='LinkedIn'
+                >
+                  <LinkedinIcon className='h-4 w-4' />
+                </a>
+              )}
+              {googleScholarUrl && (
+                <a
+                  href={googleScholarUrl}
+                  className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white/50 transition-colors hover:bg-white/10 hover:text-white'
+                  aria-label='Google Scholar'
+                >
+                  <BookOpen className='h-4 w-4' strokeWidth={1.5} />
+                </a>
+              )}
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label='Footer main links'>
             <h3 className='text-xs font-bold uppercase tracking-[0.15em] text-white/30'>
               Quick Links
             </h3>
             <ul className='mt-4 space-y-2.5'>
-              {NAV_LINKS.map((link) => (
+              {footerLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -75,7 +94,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
@@ -85,31 +104,35 @@ export function Footer() {
             <ul className='mt-4 space-y-3'>
               <li>
                 <a
-                  href='mailto:contact@himanshi.dev'
+                  href={emailHref}
                   className='flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white'
                 >
                   <Mail className='h-4 w-4' strokeWidth={1.5} />
-                  contact@himanshi.dev
+                  {email}
                 </a>
               </li>
-              <li>
-                <a
-                  href='#'
-                  className='flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white'
-                >
-                  <LinkedinIcon className='h-4 w-4' />
-                  LinkedIn Profile
-                </a>
-              </li>
-              <li>
-                <a
-                  href='#'
-                  className='flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white'
-                >
-                  <ExternalLink className='h-4 w-4' strokeWidth={1.5} />
-                  ORCID Profile
-                </a>
-              </li>
+              {linkedinUrl && (
+                <li>
+                  <a
+                    href={linkedinUrl}
+                    className='flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white'
+                  >
+                    <LinkedinIcon className='h-4 w-4' />
+                    LinkedIn Profile
+                  </a>
+                </li>
+              )}
+              {orcidUrl && (
+                <li>
+                  <a
+                    href={orcidUrl}
+                    className='flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white'
+                  >
+                    <ExternalLink className='h-4 w-4' strokeWidth={1.5} />
+                    ORCID Profile
+                  </a>
+                </li>
+              )}
             </ul>
 
             <div className='mt-8'>

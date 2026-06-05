@@ -7,11 +7,30 @@ const mockCreateItem = jest.fn((collection: string, payload: Record<string, unkn
   collection,
   payload,
 }))
+const mockGetSiteConfig = jest.fn()
+const mockSendContactEmail = jest.fn()
 
 jest.mock('@/lib/cms/directus-client', () => ({
   directusClient: {
     request: (...args: unknown[]) => mockRequest(...args),
   },
+}))
+
+jest.mock('@/lib/cms/queries', () => ({
+  getSiteConfig: () => mockGetSiteConfig(),
+}))
+
+jest.mock('@/lib/email/smtp', () => ({
+  hasSmtpSettings: (settings: Record<string, unknown>) =>
+    Boolean(
+      settings.host &&
+        settings.port &&
+        settings.user &&
+        settings.password &&
+        settings.fromEmail &&
+        settings.toEmail,
+    ),
+  sendContactEmail: (...args: unknown[]) => mockSendContactEmail(...args),
 }))
 
 jest.mock('@directus/sdk', () => ({
@@ -42,10 +61,21 @@ describe('POST /api/contact', () => {
   beforeEach(() => {
     mockRequest.mockReset()
     mockCreateItem.mockReset()
+    mockGetSiteConfig.mockReset()
+    mockSendContactEmail.mockReset()
     mockCreateItem.mockImplementation((collection: string, payload: Record<string, unknown>) => ({
       collection,
       payload,
     }))
+    mockGetSiteConfig.mockResolvedValue({
+      smtp_host: '',
+      smtp_port: null,
+      smtp_secure: false,
+      smtp_user: '',
+      smtp_password: '',
+      smtp_from_email: '',
+      smtp_to_email: '',
+    })
   })
 
   it('returns success for honeypot submissions without writing to cms', async () => {
@@ -57,6 +87,7 @@ describe('POST /api/contact', () => {
     expect(response.status).toBe(200)
     expect(data.success).toBe(true)
     expect(mockRequest).not.toHaveBeenCalled()
+    expect(mockSendContactEmail).not.toHaveBeenCalled()
   })
 
   it('returns validation errors for invalid payload', async () => {
@@ -80,6 +111,7 @@ describe('POST /api/contact', () => {
       message: 'Message must be at least 10 characters',
     })
     expect(mockRequest).not.toHaveBeenCalled()
+    expect(mockSendContactEmail).not.toHaveBeenCalled()
   })
 
   it('persists valid submissions', async () => {
@@ -100,6 +132,42 @@ describe('POST /api/contact', () => {
       }),
     )
     expect(mockRequest).toHaveBeenCalledTimes(1)
+    expect(mockSendContactEmail).not.toHaveBeenCalled()
+  })
+
+  it('sends contact email with SMTP settings from Directus', async () => {
+    mockRequest.mockResolvedValueOnce({})
+    mockGetSiteConfig.mockResolvedValueOnce({
+      smtp_host: 'smtp.example.com',
+      smtp_port: 587,
+      smtp_secure: false,
+      smtp_user: 'doctor@example.com',
+      smtp_password: 'app-password',
+      smtp_from_email: 'doctor@example.com',
+      smtp_to_email: 'assistant@example.com',
+    })
+
+    const response = await POST(
+      buildRequest(validBody(), '10.0.0.15'),
+    )
+
+    expect(response.status).toBe(200)
+    expect(mockSendContactEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Dr. Test User',
+        email: 'test.user@example.com',
+        subject: 'Academic Collaboration',
+      }),
+      expect.objectContaining({
+        host: 'smtp.example.com',
+        port: 587,
+        secure: false,
+        user: 'doctor@example.com',
+        password: 'app-password',
+        fromEmail: 'doctor@example.com',
+        toEmail: 'assistant@example.com',
+      }),
+    )
   })
 
   it('enforces ip-based rate limits', async () => {

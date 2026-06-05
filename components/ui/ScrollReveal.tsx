@@ -22,7 +22,7 @@ function getObserver() {
         }
       }
     },
-    { rootMargin: '0px 0px -20% 0px', threshold: 0.01 },
+    { rootMargin: '0px 0px 20% 0px', threshold: 0 },
   )
 
   return sharedObserver

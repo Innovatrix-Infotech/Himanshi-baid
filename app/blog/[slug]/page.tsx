@@ -4,6 +4,13 @@ import { getBlogPostBySlug, getLatestBlogPosts } from '@/lib/cms/queries'
 import { PageWrapper } from '@/components/PageWrapper'
 import { BlogPostHeader } from '@/components/sections/blog/BlogPostHeader'
 import { BlogPostContent } from '@/components/sections/blog/BlogPostContent'
+import {
+  absoluteAssetUrl,
+  buildBlogPostJsonLd,
+  buildPageMetadata,
+  JsonLd,
+  SEO_ROUTES,
+} from '@/lib/seo'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
@@ -18,9 +25,17 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   return {
-    title: post.seo_title || `${post.title} | Dr. Himanshi Baid`,
-    description: post.seo_description || post.excerpt,
-  }
+    ...buildPageMetadata(SEO_ROUTES.blog, {
+      title: post.seo_title || post.title,
+      description: post.seo_description || post.excerpt,
+      path: `/blog/${post.slug}`,
+      image: absoluteAssetUrl(post.featured_image) ?? '/opengraph-image',
+      type: 'article',
+      publishedTime: post.published_at,
+      modifiedTime: post.published_at,
+      tags: post.tags,
+    }),
+  } satisfies Metadata
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -38,11 +53,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const trendingPosts = latestPosts.filter((p) => p.slug !== slug).slice(0, 4)
 
   return (
-    <PageWrapper>
-      <main>
-        <BlogPostHeader post={post} />
-        <BlogPostContent post={post} trendingPosts={trendingPosts} />
-      </main>
-    </PageWrapper>
+    <>
+      <JsonLd data={buildBlogPostJsonLd(post)} />
+      <PageWrapper>
+        <main>
+          <BlogPostHeader post={post} />
+          <BlogPostContent post={post} trendingPosts={trendingPosts} />
+        </main>
+      </PageWrapper>
+    </>
   )
 }

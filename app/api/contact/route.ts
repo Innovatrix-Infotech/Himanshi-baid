@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createItem } from '@directus/sdk'
 import { directusClient } from '@/lib/cms/directus-client'
+import { getSiteConfig } from '@/lib/cms/queries'
+import { hasSmtpSettings, sendContactEmail, type SmtpSettings } from '@/lib/email/smtp'
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000
 const RATE_LIMIT_MAX = 5
@@ -88,6 +90,21 @@ export async function POST(request: Request) {
     await directusClient.request(
       createItem('hb_contact_submissions', { name, email, subject, message }),
     )
+
+    const siteConfig = await getSiteConfig()
+    const smtpSettings: Partial<SmtpSettings> = {
+      host: siteConfig.smtp_host,
+      port: siteConfig.smtp_port ?? undefined,
+      secure: siteConfig.smtp_secure,
+      user: siteConfig.smtp_user,
+      password: siteConfig.smtp_password,
+      fromEmail: siteConfig.smtp_from_email,
+      toEmail: siteConfig.smtp_to_email,
+    }
+
+    if (hasSmtpSettings(smtpSettings)) {
+      await sendContactEmail({ name, email, subject, message }, smtpSettings)
+    }
 
     recordSubmission(ip)
 

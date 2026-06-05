@@ -5,6 +5,11 @@ export type HBConferenceType = 'oral_presentation' | 'poster' | 'workshop_attend
 export type HBPublicationCategory = 'original_research' | 'case_report' | 'review' | 'letter'
 export type HBExperienceType = 'academic' | 'clinical' | 'admin'
 
+export interface HBFooterLink {
+  label: string
+  href: string
+}
+
 export interface HBSiteConfig {
   id: number
   site_title: string
@@ -23,6 +28,14 @@ export interface HBSiteConfig {
   seo_title: string
   seo_description: string
   og_image: string | null
+  footer_links: HBFooterLink[]
+  smtp_host: string
+  smtp_port: number | null
+  smtp_secure: boolean
+  smtp_user: string
+  smtp_password: string
+  smtp_from_email: string
+  smtp_to_email: string
 }
 
 export interface HBEducation {

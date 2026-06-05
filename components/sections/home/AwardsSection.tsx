@@ -5,69 +5,6 @@ import { Container } from '@/components/ui/Container'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 import type { HBAward, HBAwardCategory } from '@/lib/cms/types'
 
-const FALLBACK_AWARDS: HBAward[] = [
-  {
-    id: 'fallback-1',
-    status: 'published',
-    sort: 1,
-    title: 'MD Gold Medal',
-    category: 'gold_medal',
-    awarding_body: 'AIIMS Rishikesh',
-    year: 2023,
-    description: '1st Position, MD/MS Batch (Jan 2019)',
-  },
-  {
-    id: 'fallback-2',
-    status: 'published',
-    sort: 2,
-    title: 'Him Ratna Award',
-    category: 'nomination',
-    awarding_body: 'AIIMS Rishikesh & National Medicos Organisation',
-    year: 2020,
-    description: 'For excellent contribution in medical service during the COVID-19 pandemic',
-  },
-  {
-    id: 'fallback-3',
-    status: 'published',
-    sort: 3,
-    title: 'ACAIM Abstract Award',
-    category: 'nomination',
-    awarding_body: 'American College of Academic International Medicine, USA',
-    year: 2021,
-    description: 'Best abstract presentation at an international forum',
-  },
-  {
-    id: 'fallback-4',
-    status: 'published',
-    sort: 4,
-    title: 'Women Icon Award',
-    category: 'nomination',
-    awarding_body: 'International Human Rights Ambassadors Organisation',
-    year: 2021,
-    description: 'For services during the COVID-19 pandemic',
-  },
-  {
-    id: 'fallback-5',
-    status: 'published',
-    sort: 5,
-    title: 'Medal of Honour',
-    category: 'other',
-    awarding_body: 'Academic Emergency Medicine Educators Conference (AEMECON)',
-    year: 2023,
-    description: 'Paper Presentation',
-  },
-  {
-    id: 'fallback-6',
-    status: 'published',
-    sort: 6,
-    title: 'INSPIRE Scholarship (SHE)',
-    category: 'other',
-    awarding_body: 'Department of Science & Technology, Govt. of India',
-    year: 2012,
-    description: 'Top 1% performance in ISC Class XII',
-  },
-]
-
 function getCategoryStyles(category: HBAwardCategory) {
   switch (category) {
     case 'gold_medal':
@@ -100,8 +37,6 @@ interface AwardsSectionProps {
 }
 
 export function AwardsSection({ awards }: AwardsSectionProps) {
-  const displayAwards = awards.length > 0 ? awards : FALLBACK_AWARDS
-
   return (
     <section className="bg-background-alt py-20 md:py-24">
       <Container>
@@ -117,9 +52,20 @@ export function AwardsSection({ awards }: AwardsSectionProps) {
           </div>
         </ScrollReveal>
 
+        {awards.length === 0 && (
+          <ScrollReveal>
+            <div className="mx-auto max-w-2xl rounded-lg border border-dashed border-border bg-white px-6 py-8 text-center">
+              <p className="text-sm font-medium text-navy">
+                Awards will appear here once they are published in Directus.
+              </p>
+            </div>
+          </ScrollReveal>
+        )}
+
         {/* Grid — equal-height cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {displayAwards.map((award, index) => {
+        {awards.length > 0 && (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {awards.map((award, index) => {
             const { icon: Icon, iconBg, iconColor, borderColor } = getCategoryStyles(award.category)
 
             return (
@@ -154,8 +100,9 @@ export function AwardsSection({ awards }: AwardsSectionProps) {
                 </div>
               </ScrollReveal>
             )
-          })}
-        </div>
+            })}
+          </div>
+        )}
       </Container>
     </section>
   )

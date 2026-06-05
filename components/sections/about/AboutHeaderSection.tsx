@@ -47,7 +47,7 @@ export function AboutHeaderSection() {
             className={`anim-fade-up mt-2 text-sm text-muted/70 ${r}`}
             style={d(280)}
           >
-            Assistant Professor, Emergency Medicine &mdash; HIMS, Swami Rama Himalayan University, Dehradun
+            Assistant Professor, Emergency Medicine &mdash; Mahatma Gandhi Medical College and Hospital, Jaipur
           </p>
 
           <div

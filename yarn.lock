@@ -1810,6 +1810,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "@types/nodemailer@npm:8.0.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/e5031df5d6557f4cdb9a0dbe1a96f3f54dc59c23d47477103fd42b5c9bc925ea1b4e51be560af5620b4d0c66fcfb015ce5ca8f914ed2f3a3086be6149d5932da
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^19":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
@@ -4070,6 +4079,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/marked": "npm:^6.0.0"
     "@types/node": "npm:^20"
+    "@types/nodemailer": "npm:^8.0.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     clsx: "npm:^2.1.1"
@@ -4082,6 +4092,7 @@ __metadata:
     lucide-react: "npm:^1.7.0"
     marked: "npm:^17.0.5"
     next: "npm:16.2.2"
+    nodemailer: "npm:^8.0.10"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
     tailwind-merge: "npm:^3.5.0"
@@ -5829,6 +5840,13 @@ __metadata:
   version: 2.0.37
   resolution: "node-releases@npm:2.0.37"
   checksum: 10c0/306df89190b3225d0cb001260de52f0befd225a782ec85311ce97b0aa3b2e22f5e4e4c00395c6dc9bc9ef440c64723f6205fe1e27d32b8dd1d140891fbadf901
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^8.0.10":
+  version: 8.0.10
+  resolution: "nodemailer@npm:8.0.10"
+  checksum: 10c0/b96fd2ea7146de58141219061e094509fd0f19aac5ac86ac35d9ce9c479dbf6c12b143fa7e7050a1be539a3542eb59520c33aabf5a119c8d28fc7d151bde329f
   languageName: node
   linkType: hard
 
