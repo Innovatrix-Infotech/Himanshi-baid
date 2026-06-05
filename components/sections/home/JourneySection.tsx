@@ -45,14 +45,20 @@ const FALLBACK_TIMELINE: TimelineItem[] = [
     year: 2023,
     type: 'experience',
     title: 'Assistant Professor, Emergency Medicine',
-    institution: 'HIMS, Swami Rama Himalayan University, Dehradun',
-    isCurrent: true,
+    institution: 'Himalayan Institute of Medical Sciences, Swami Rama Himalayan University, Dehradun',
   },
   {
     year: 2025,
     type: 'education',
     title: 'MRCEM (UK)',
     institution: 'Royal College of Emergency Medicine, London',
+  },
+  {
+    year: 2026,
+    type: 'experience',
+    title: 'Assistant Professor, Emergency Medicine',
+    institution: 'Mahatma Gandhi Medical College and Hospital, Jaipur',
+    isCurrent: true,
   },
 ]
 
@@ -64,7 +70,10 @@ function buildTimeline(
     return FALLBACK_TIMELINE
   }
 
-  const items: TimelineItem[] = []
+  const items: TimelineItem[] = [
+    ...(education.length === 0 ? FALLBACK_TIMELINE.filter((item) => item.type === 'education') : []),
+    ...(experience.length === 0 ? FALLBACK_TIMELINE.filter((item) => item.type === 'experience') : []),
+  ]
 
   for (const edu of education) {
     items.push({

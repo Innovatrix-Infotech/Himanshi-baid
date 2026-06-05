@@ -11,8 +11,8 @@ interface Membership {
 
 const MEMBERSHIPS: Membership[] = [
   { name: 'Royal College of Emergency Medicine', abbreviation: 'RCEM (UK)' },
+  { name: 'Emergency Medicine Association of India', abbreviation: 'EMAI' },
   { name: 'Academic Emergency Medicine Association', abbreviation: 'AEME' },
-  { name: 'Emergency Medicine Association', abbreviation: 'EMA' },
   { name: 'Pedistars', abbreviation: 'Pedistars' },
 ]
 

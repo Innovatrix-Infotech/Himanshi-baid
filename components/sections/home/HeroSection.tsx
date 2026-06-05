@@ -5,7 +5,7 @@ import { CmsImage } from '@/components/ui/CmsImage'
 import { Button } from '@/components/ui/Button'
 import { useRevealReady } from '@/components/PageWrapper'
 import { getAssetUrl } from '@/lib/cms/directus-client'
-import { Stethoscope, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import type { HBSiteConfig } from '@/lib/cms/types'
 
 interface HeroSectionProps {
@@ -13,7 +13,8 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ siteConfig }: HeroSectionProps) {
-  const photoUrl = getAssetUrl(siteConfig.profile_photo)
+  const photoUrl = getAssetUrl(siteConfig.profile_photo) ?? '/1.jpeg'
+  const shortBio = siteConfig.bio_short || siteConfig.bio
   const revealReady = useRevealReady()
   const [revealed, setRevealed] = useState(false)
 
@@ -58,14 +59,14 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
             <div className={`anim-fade-up mt-5 ${r}`} style={d(250)}>
               <div className='anim-line h-[2px] w-12 bg-accent revealed' style={d(300)} />
               <p className='mt-3 text-sm font-medium text-muted'>
-                MBBS, MD Emergency Medicine &mdash; AIIMS Rishikesh
+                MBBS, MD Emergency Medicine, MRCEM (UK), PDCC (Emergency Toxicology)
               </p>
             </div>
 
             {/* Bio */}
-            {siteConfig.bio_short && (
+            {shortBio && (
               <p className={`anim-fade-up mt-5 max-w-md text-base leading-relaxed text-muted ${r}`} style={d(350)}>
-                {siteConfig.bio_short}
+                {shortBio}
               </p>
             )}
 
@@ -83,7 +84,7 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
             {/* Quick stats row */}
             <div className={`anim-fade-up mt-10 flex gap-8 ${r}`} style={d(500)}>
               <div>
-                <p className='text-2xl font-bold text-navy'>10+</p>
+                <p className='text-2xl font-bold text-navy'>18</p>
                 <p className='text-xs text-muted'>Publications</p>
               </div>
               <div className='h-10 w-px bg-border' />
@@ -93,8 +94,8 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
               </div>
               <div className='h-10 w-px bg-border' />
               <div>
-                <p className='text-2xl font-bold text-navy'>AIIMS</p>
-                <p className='text-xs text-muted'>Trained</p>
+                <p className='text-2xl font-bold text-navy'>MGMCH</p>
+                <p className='text-xs text-muted'>Faculty</p>
               </div>
             </div>
           </div>
@@ -105,23 +106,15 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
               <div className='relative mx-auto max-w-lg'>
                 {/* Photo */}
                 <div className='relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl'>
-                  {photoUrl ? (
-                    <CmsImage
-                      src={photoUrl}
-                      alt={siteConfig.site_title || 'Dr. Himanshi Baid'}
-                      fill
-                      className='object-cover'
-                      sizes='(max-width: 768px) 90vw, 500px'
-                      priority
-                    />
-                  ) : (
-                    <div className='flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-accent-light to-white'>
-                      <div className='flex h-32 w-32 items-center justify-center rounded-3xl bg-navy/10'>
-                        <Stethoscope className='h-16 w-16 text-navy/30' strokeWidth={1} />
-                      </div>
-                      <p className='mt-4 text-sm text-muted'>Photo coming soon</p>
-                    </div>
-                  )}
+                  <CmsImage
+                    src={photoUrl}
+                    alt={siteConfig.site_title || 'Dr. Himanshi Baid'}
+                    fill
+                    wrapperClassName='relative h-full w-full'
+                    className='object-cover'
+                    sizes='(max-width: 768px) 90vw, 500px'
+                    priority
+                  />
                 </div>
 
                 {/* Floating badge */}
@@ -131,16 +124,16 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
                       <div className='h-2.5 w-2.5 rounded-full bg-green-500' />
                     </div>
                     <div>
-                      <p className='text-xs font-bold text-foreground'>15+ Conferences</p>
-                      <p className='text-[10px] text-muted'>Speaker &amp; Presenter</p>
+                      <p className='text-xs font-bold text-foreground'>Assistant Professor</p>
+                      <p className='text-[10px] text-muted'>Emergency Medicine</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Floating badge top */}
                 <div className='float-badge absolute -right-4 top-8 rounded-2xl bg-white px-4 py-2.5 shadow-lg md:-right-8' style={{ animationDelay: '1s' }}>
-                  <p className='text-xs font-bold text-accent'>AIIMS Rishikesh</p>
-                  <p className='text-[10px] text-muted'>MD Emergency Medicine</p>
+                  <p className='text-xs font-bold text-accent'>MGMCH, Jaipur</p>
+                  <p className='text-[10px] text-muted'>Current Faculty</p>
                 </div>
               </div>
             </div>

@@ -3,17 +3,22 @@
 import { CheckCircle, Users } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
+import type { HBThesis } from '@/lib/cms/types'
 
 const TEACHING_HIGHLIGHTS = [
   'Undergraduate and postgraduate teaching — lectures, bedside teaching, and simulation',
-  'PG thesis co-guide for 4 MD Emergency Medicine students',
+  'PG thesis co-guide for Emergency Medicine students',
   'Board of Studies member and PG exit examination contributor',
   'Quizmaster at institutional, state, and national academic forums',
   'Faculty at simulation-based education workshops and conferences',
   'Internship supervisor and academic schedule planner',
 ]
 
-export function TeachingSection() {
+interface TeachingSectionProps {
+  thesis: HBThesis[]
+}
+
+export function TeachingSection({ thesis }: TeachingSectionProps) {
   return (
     <section className="bg-white py-20 md:py-24">
       <Container>
@@ -50,7 +55,7 @@ export function TeachingSection() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-light">
                   <Users className="h-7 w-7 text-accent" strokeWidth={1.5} />
                 </div>
-                <p className="text-4xl font-bold text-navy">4</p>
+                <p className="text-4xl font-bold text-navy">{thesis.length}</p>
                 <p className="mt-1 text-sm font-medium text-navy">
                   PG Thesis Students
                 </p>
@@ -58,9 +63,31 @@ export function TeachingSection() {
                   Supervised as Co-Guide
                 </p>
                 <div className="mx-auto mt-5 h-px w-12 bg-border" />
-                <p className="mt-4 text-xs leading-relaxed text-muted">
-                  Active involvement in simulation-based medical education, journal clubs, seminars, and academic audits.
-                </p>
+                {thesis.length > 0 ? (
+                  <div className="mt-5 space-y-3 text-left">
+                    {thesis.map((item) => (
+                      <div key={item.id} className="rounded-lg border border-border bg-white p-3">
+                        <p className="text-xs font-semibold leading-relaxed text-navy">
+                          {item.title}
+                        </p>
+                        {item.student_name && (
+                          <p className="mt-1 text-[11px] text-muted">
+                            {item.student_name}
+                          </p>
+                        )}
+                        {item.status && (
+                          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.12em] text-accent">
+                            {item.status}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-xs leading-relaxed text-muted">
+                    Thesis supervision records will appear here once they are published in Directus.
+                  </p>
+                )}
               </div>
             </ScrollReveal>
           </div>

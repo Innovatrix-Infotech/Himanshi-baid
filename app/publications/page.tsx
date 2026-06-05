@@ -3,12 +3,15 @@ import { getSiteConfig, getPublications } from '@/lib/cms/queries'
 import { PageWrapper } from '@/components/PageWrapper'
 import { PublicationsHeaderSection } from '@/components/sections/publications/PublicationsHeaderSection'
 import { PublicationsListSection } from '@/components/sections/publications/PublicationsListSection'
+import {
+  buildPageJsonLd,
+  buildPageMetadata,
+  buildPublicationItemListJsonLd,
+  JsonLd,
+  SEO_ROUTES,
+} from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Publications | Dr. Himanshi Baid',
-  description:
-    '14 PubMed-indexed publications in emergency medicine including case reports, diagnostic validation studies, systematic reviews, and original research.',
-}
+export const metadata: Metadata = buildPageMetadata(SEO_ROUTES.publications)
 
 export default async function PublicationsPage() {
   const [siteConfig, publications] = await Promise.all([
@@ -17,11 +20,18 @@ export default async function PublicationsPage() {
   ])
 
   return (
-    <PageWrapper>
-      <main>
-        <PublicationsHeaderSection siteConfig={siteConfig} />
-        <PublicationsListSection publications={publications} />
-      </main>
-    </PageWrapper>
+    <>
+      <JsonLd
+        data={buildPageJsonLd(SEO_ROUTES.publications, {
+          mainEntity: buildPublicationItemListJsonLd(publications),
+        })}
+      />
+      <PageWrapper>
+        <main>
+          <PublicationsHeaderSection siteConfig={siteConfig} />
+          <PublicationsListSection publications={publications} />
+        </main>
+      </PageWrapper>
+    </>
   )
 }

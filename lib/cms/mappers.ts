@@ -8,6 +8,7 @@ import type {
   HBCertification,
   HBBlogPost,
   HBContactSubmission,
+  HBThesis,
   HBStatus,
   HBAwardCategory,
   HBBlogCategory,
@@ -56,6 +57,20 @@ function asStringArray(value: unknown): string[] {
   return []
 }
 
+function asFooterLinks(value: unknown) {
+  if (!Array.isArray(value)) return []
+
+  return value
+    .map((item) => {
+      const r = isRecord(item) ? item : {}
+      return {
+        label: asString(r.label).trim(),
+        href: asString(r.href).trim(),
+      }
+    })
+    .filter((item) => item.label.length > 0 && item.href.length > 0)
+}
+
 const VALID_AWARD_CATEGORIES = new Set<HBAwardCategory>(['gold_medal', 'university_rank', 'nomination', 'other'])
 function asAwardCategory(value: unknown): HBAwardCategory {
   if (typeof value === 'string' && VALID_AWARD_CATEGORIES.has(value as HBAwardCategory)) {
@@ -86,6 +101,7 @@ const VALID_PUB_CATEGORIES = new Set<HBPublicationCategory>([
   'original_research', 'case_report', 'review', 'letter',
 ])
 function asPublicationCategory(value: unknown): HBPublicationCategory {
+  if (value === 'study') return 'original_research'
   if (typeof value === 'string' && VALID_PUB_CATEGORIES.has(value as HBPublicationCategory)) {
     return value as HBPublicationCategory
   }
@@ -102,13 +118,14 @@ function asExperienceType(value: unknown): HBExperienceType {
 
 export function mapSiteConfig(input: unknown): HBSiteConfig {
   const r = isRecord(input) ? input : {}
+  const bio = asString(r.bio)
   return {
     id: typeof r.id === 'number' ? r.id : 1,
     site_title: asString(r.site_title, 'Dr. Himanshi Baid'),
     tagline: asString(r.tagline, 'Where Critical Care Meets Academic Rigour'),
-    bio: asString(r.bio),
-    bio_short: asString(r.bio_short),
-    bio_full: asString(r.bio_full),
+    bio,
+    bio_short: asString(r.bio_short, bio),
+    bio_full: asString(r.bio_full, bio),
     philosophy: asString(r.philosophy),
     profile_photo: asAssetId(r.profile_photo),
     cv_file: asAssetId(r.cv_file),
@@ -120,6 +137,14 @@ export function mapSiteConfig(input: unknown): HBSiteConfig {
     seo_title: asString(r.seo_title, 'Dr. Himanshi Baid | Emergency Medicine'),
     seo_description: asString(r.seo_description),
     og_image: asAssetId(r.og_image),
+    footer_links: asFooterLinks(r.footer_links),
+    smtp_host: asString(r.smtp_host),
+    smtp_port: asNumber(r.smtp_port),
+    smtp_secure: asBoolean(r.smtp_secure),
+    smtp_user: asString(r.smtp_user),
+    smtp_password: asString(r.smtp_password),
+    smtp_from_email: asString(r.smtp_from_email),
+    smtp_to_email: asString(r.smtp_to_email),
   }
 }
 
@@ -194,6 +219,9 @@ export function mapPublication(input: unknown): HBPublication {
 
 export function mapConference(input: unknown): HBConference {
   const r = isRecord(input) ? input : {}
+  const date = asString(r.date) || null
+  const parsedYear = date ? Number(date.slice(0, 4)) : null
+  const year = Number.isFinite(parsedYear) ? parsedYear : null
   return {
     id: asString(r.id),
     status: asStatus(r.status),
@@ -202,8 +230,8 @@ export function mapConference(input: unknown): HBConference {
     conference_name: asString(r.event_name) || asString(r.conference_name),
     type: asConferenceType(r.type),
     role: asString(r.role),
-    date: asString(r.date) || null,
-    year: asNumber(r.year),
+    date,
+    year: asNumber(r.year, year),
     location: asString(r.location),
     topic: asString(r.topic),
     description: asString(r.description),
@@ -221,6 +249,17 @@ export function mapCertification(input: unknown): HBCertification {
     year: asNumber(r.year),
     credential_id: asString(r.credential_id),
     url: asString(r.url),
+  }
+}
+
+export function mapThesis(input: unknown): HBThesis {
+  const r = isRecord(input) ? input : {}
+  return {
+    id: asString(r.id),
+    sort: asNumber(r.sort, 0) ?? 0,
+    student_name: asString(r.student_name),
+    title: asString(r.title),
+    status: asString(r.status),
   }
 }
 

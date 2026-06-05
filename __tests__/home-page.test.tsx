@@ -2,9 +2,11 @@ import { render, screen } from '@testing-library/react'
 import { PageWrapper } from '@/components/PageWrapper'
 import { HeroSection } from '@/components/sections/home/HeroSection'
 import { HighlightsSection } from '@/components/sections/home/HighlightsSection'
+import { JourneySection } from '@/components/sections/home/JourneySection'
 import { PhilosophySection } from '@/components/sections/home/PhilosophySection'
 import { LatestPostsSection } from '@/components/sections/home/LatestPostsSection'
-import type { HBSiteConfig } from '@/lib/cms/types'
+import { AboutHeaderSection } from '@/components/sections/about/AboutHeaderSection'
+import type { HBSiteConfig, HBExperience } from '@/lib/cms/types'
 
 function renderWithWrapper(ui: React.ReactElement) {
   return render(<PageWrapper>{ui}</PageWrapper>)
@@ -28,6 +30,14 @@ const mockSiteConfig: HBSiteConfig = {
   seo_title: '',
   seo_description: '',
   og_image: null,
+  footer_links: [],
+  smtp_host: '',
+  smtp_port: null,
+  smtp_secure: false,
+  smtp_user: '',
+  smtp_password: '',
+  smtp_from_email: '',
+  smtp_to_email: '',
 }
 
 describe('HeroSection', () => {
@@ -47,9 +57,26 @@ describe('HeroSection', () => {
     expect(screen.getByRole('link', { name: 'Read Blog' })).toHaveAttribute('href', '/blog')
   })
 
-  it('renders photo placeholder when no profile photo', () => {
+  it('uses the local profile photo when no CMS photo is configured', () => {
     renderWithWrapper(<HeroSection siteConfig={mockSiteConfig} />)
-    expect(screen.getByText('Photo coming soon')).toBeInTheDocument()
+    const image = screen.getByAltText('Dr. Himanshi Baid')
+    expect(image).toHaveAttribute('src', expect.stringContaining('1.jpeg'))
+    expect(screen.queryByText('Photo coming soon')).not.toBeInTheDocument()
+  })
+
+  it('renders updated credentials and current institution context', () => {
+    renderWithWrapper(<HeroSection siteConfig={mockSiteConfig} />)
+    expect(screen.getByText(/MRCEM \(UK\)/)).toBeInTheDocument()
+    expect(screen.getByText('MGMCH, Jaipur')).toBeInTheDocument()
+  })
+})
+
+describe('AboutHeaderSection', () => {
+  it('renders the current MGMCH appointment', () => {
+    renderWithWrapper(<AboutHeaderSection />)
+    expect(
+      screen.getByText(/Mahatma Gandhi Medical College and Hospital, Jaipur/),
+    ).toBeInTheDocument()
   })
 })
 
@@ -67,6 +94,33 @@ describe('HighlightsSection', () => {
     expect(screen.getByText('Gold Medals')).toBeInTheDocument()
     expect(screen.getByText('Conferences')).toBeInTheDocument()
     expect(screen.getByText('Training')).toBeInTheDocument()
+  })
+})
+
+describe('JourneySection', () => {
+  it('keeps education fallback entries when CMS only has experience', () => {
+    const experience: HBExperience[] = [
+      {
+        id: 'current-role',
+        status: 'published',
+        sort: 1,
+        title: '',
+        role: 'Assistant Professor - Emergency Medicine',
+        organization: 'Mahatma Gandhi Medical College and Hospital, Jaipur',
+        institution: 'Mahatma Gandhi Medical College and Hospital, Jaipur',
+        department: '',
+        start_date: '2026-05-14',
+        end_date: null,
+        is_current: true,
+        type: 'academic',
+        description: '',
+        is_covid_related: false,
+      },
+    ]
+
+    render(<JourneySection education={[]} experience={experience} />)
+    expect(screen.getAllByText('MBBS').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Mahatma Gandhi Medical College and Hospital, Jaipur').length).toBeGreaterThan(0)
   })
 })
 

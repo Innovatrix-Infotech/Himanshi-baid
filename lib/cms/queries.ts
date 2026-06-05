@@ -13,8 +13,9 @@ import {
   mapCertification,
   mapPublication,
   mapConference,
+  mapThesis,
 } from './mappers'
-import type { HBSiteConfig, HBBlogPost, HBBlogCategory, HBEducation, HBExperience, HBCertification, HBPublication, HBConference } from './types'
+import type { HBSiteConfig, HBBlogPost, HBBlogCategory, HBEducation, HBExperience, HBCertification, HBPublication, HBConference, HBThesis } from './types'
 
 async function safeCmsQuery<T>(queryFn: () => Promise<T>, fallback: unknown): Promise<T | typeof fallback> {
   try {
@@ -59,9 +60,6 @@ export const getPublicationsCount = cache(async (): Promise<number> => {
           directusClient.request(
             aggregate('hb_publications', {
               aggregate: { count: ['id'] },
-              query: {
-                filter: { status: { _eq: 'published' } },
-              },
             }),
           ),
         [],
@@ -84,13 +82,6 @@ export const getGoldMedalsCount = cache(async (): Promise<number> => {
           directusClient.request(
             aggregate('hb_awards', {
               aggregate: { count: ['id'] },
-              query: {
-                filter: {
-                  _and: [
-                    { category: { _eq: 'gold_medal' } },
-                  ],
-                },
-              },
             }),
           ),
         [],
@@ -156,6 +147,28 @@ export const getLatestBlogPosts = cache(
     return fn()
   },
 )
+
+export const getAllBlogPosts = cache(async (): Promise<HBBlogPost[]> => {
+  const fn = taggedCache(
+    'cms-all-blogs',
+    [CMS_TAGS.blogs],
+    async () => {
+      const data = await safeCmsQuery(
+        () =>
+          directusClient.request(
+            readItems('hb_blogs', {
+              filter: { status: { _eq: 'published' } },
+              sort: ['-published_at'],
+              limit: -1,
+            }),
+          ),
+        [],
+      )
+      return mapArray(data, mapBlogPost)
+    },
+  )
+  return fn()
+})
 
 export const getEducation = cache(async (): Promise<HBEducation[]> => {
   const fn = taggedCache(
@@ -250,7 +263,6 @@ export const getPublications = cache(async (): Promise<HBPublication[]> => {
         () =>
           directusClient.request(
             readItems('hb_publications', {
-              filter: { status: { _eq: 'published' } },
               sort: ['sort'],
               limit: -1,
             }),
@@ -352,7 +364,6 @@ export const getConferences = cache(async (): Promise<HBConference[]> => {
         () =>
           directusClient.request(
             readItems('hb_conferences', {
-              filter: { status: { _eq: 'published' } },
               sort: ['sort'],
               limit: -1,
             }),
@@ -360,6 +371,27 @@ export const getConferences = cache(async (): Promise<HBConference[]> => {
         [],
       )
       return mapArray(data, mapConference)
+    },
+  )
+  return fn()
+})
+
+export const getThesis = cache(async (): Promise<HBThesis[]> => {
+  const fn = taggedCache(
+    'cms-thesis',
+    [CMS_TAGS.thesis],
+    async () => {
+      const data = await safeCmsQuery(
+        () =>
+          directusClient.request(
+            readItems('hb_thesis', {
+              sort: ['sort'],
+              limit: -1,
+            }),
+          ),
+        [],
+      )
+      return mapArray(data, mapThesis)
     },
   )
   return fn()

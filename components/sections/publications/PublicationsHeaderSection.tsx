@@ -22,7 +22,7 @@ export function PublicationsHeaderSection({ siteConfig }: PublicationsHeaderSect
               Research & Publications
             </h1>
             <p className="mt-4 text-base leading-relaxed text-muted">
-              14 PubMed-indexed publications spanning case reports, diagnostic validation studies,
+              Publications spanning case reports, diagnostic validation studies,
               systematic reviews, and original research in emergency medicine.
             </p>
             <div className="mx-auto mt-6 h-0.5 w-16 bg-accent" />
