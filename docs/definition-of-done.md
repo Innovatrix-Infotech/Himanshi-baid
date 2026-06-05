@@ -15,6 +15,6 @@
 
 ## Delivery
 
-- CI is green
+- Local quality gates are green
 - PR targets `development`
 - Branch is rebased/updated before merge
